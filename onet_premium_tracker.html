@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onet Premium — Tracker Zmian Oferty</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;--border:#2a2a38;--border2:#3a3a50;--text:#e8e8f0;--text2:#8888aa;--text3:#555570;--accent:#5b6af0;--accent2:#7b8aff;--green:#2dd4a0;--amber:#f0b429;--purple:#b06af0;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:13px;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+
+.topbar{display:flex;align-items:center;gap:16px;padding:0 24px;height:52px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.08em;font-family:var(--mono);}
+.logo-title{font-weight:600;font-size:14px;}
+.logo-sub{color:var(--text2);font-size:12px;border-left:1px solid var(--border2);padding-left:12px;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.count-pill{color:var(--text2);font-size:12px;font-family:var(--mono);}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;}
+.btn-accent{background:var(--accent);color:#fff;}.btn-accent:hover{background:var(--accent2);}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-outline:hover{color:var(--text);border-color:var(--accent);}
+.btn-amber{background:rgba(240,180,41,.15);color:var(--amber);border:1px solid rgba(240,180,41,.3);}.btn-amber:hover{background:rgba(240,180,41,.25);}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
+.stat{padding:18px 24px;border-right:1px solid var(--border);}.stat:last-child{border-right:none;}
+.stat-val{font-size:28px;font-weight:600;font-family:var(--mono);line-height:1;}
+.c-a{color:var(--accent2);}.c-g{color:var(--green);}.c-am{color:var(--amber);}.c-p{color:var(--purple);}
+.stat-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-top:5px;}
+
+.filters{display:flex;align-items:center;gap:8px;padding:12px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.sw{position:relative;}
+.sw input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 10px 6px 28px;color:var(--text);font-size:12px;font-family:var(--sans);width:200px;outline:none;}
+.sw input:focus{border-color:var(--accent);}.sw input::placeholder{color:var(--text3);}
+.si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px;}
+select.flt{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 26px 6px 10px;color:var(--text2);font-size:12px;font-family:var(--sans);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555570'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+select.flt:focus{border-color:var(--accent);color:var(--text);}
+.reset-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:4px;}.reset-btn:hover{color:var(--text);}
+
+.table-wrap{overflow-x:auto;max-height:calc(100vh - 175px);overflow-y:auto;}
+table{width:100%;border-collapse:collapse;}
+
+th{
+  position:sticky;top:0;z-index:10;
+  background:var(--surface2);
+  padding:10px 12px;text-align:left;
+  font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text3);border-bottom:2px solid var(--border2);
+  white-space:nowrap;cursor:pointer;user-select:none;
+}
+th:hover{color:var(--text2);}
+
+tbody tr.dr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer;}
+tbody tr.dr:hover td{background:rgba(255,255,255,.02);}
+tbody tr.dr.exp td{background:rgba(91,106,240,.05);}
+td{padding:9px 12px;vertical-align:middle;white-space:nowrap;}
+td.wrap{white-space:normal;max-width:220px;line-height:1.4;}
+
+tr.er td{padding:0;background:rgba(91,106,240,.03);border-bottom:1px solid var(--border);}
+.ei{padding:14px 16px 18px 44px;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.es h4{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.es table{font-size:12px;width:100%;}
+.es th{position:static;top:auto;font-size:10px;padding:6px 8px;color:var(--text3);border-bottom:1px solid var(--border);background:transparent;letter-spacing:.06em;}
+.es td{padding:6px 8px;border-bottom:1px solid rgba(42,42,56,.5);white-space:normal;}
+.al{color:var(--accent2);font-size:11px;cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:4px;}
+.al:hover{text-decoration:underline;}
+
+.ed{background:none;border:none;color:var(--text);font-family:var(--sans);font-size:12px;width:100%;outline:none;padding:2px 4px;border-radius:3px;}
+.ed:hover{background:rgba(255,255,255,.04);}.ed:focus{background:var(--surface);border:1px solid var(--accent);}
+select.ed{appearance:none;cursor:pointer;}
+
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:var(--mono);}
+.b-acq{background:rgba(45,212,160,.12);color:var(--green);border:1px solid rgba(45,212,160,.2);}
+.b-wb{background:rgba(240,180,41,.12);color:var(--amber);border:1px solid rgba(240,180,41,.2);}
+.b-inne{background:rgba(176,106,240,.12);color:var(--purple);border:1px solid rgba(176,106,240,.2);}
+.code{font-family:var(--mono);font-size:11px;color:var(--text2);background:rgba(255,255,255,.04);padding:2px 5px;border-radius:3px;}
+.empty{color:var(--text3);font-style:italic;font-size:11px;}
+.arr{color:var(--text3);font-size:10px;transition:transform .2s;display:inline-block;}
+.exp .arr{transform:rotate(90deg);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:6px;}
+.modal p{color:var(--text2);font-size:12px;margin-bottom:14px;}
+.modal textarea{width:100%;height:130px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:10px;color:var(--text);font-family:var(--mono);font-size:11px;resize:vertical;outline:none;}
+.modal textarea:focus{border-color:var(--accent);}
+.schema{font-size:10px;color:var(--text3);font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin:10px 0;line-height:1.8;}
+.mf{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+.ff label{display:block;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
+.ff input,.ff select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:7px 10px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;}
+.ff input:focus,.ff select:focus{border-color:var(--accent);}
+.ff.full{grid-column:1/-1;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="logo-badge">ONET</span>
+    <span class="logo-title">PREMIUM</span>
+    <span class="logo-sub">Tracker Zmian Oferty</span>
+  </div>
+  <div class="topbar-right">
+    <span class="count-pill" id="top-count">18 ofert</span>
+    <button class="btn btn-amber" onclick="document.getElementById('bulk-modal').classList.add('open')">⚡ Wklej masowo</button>
+    <button class="btn btn-accent" onclick="document.getElementById('add-modal').classList.add('open')">＋ Dodaj ofertę</button>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-val c-a" id="s-total">18</div><div class="stat-lbl">Ofert łącznie</div></div>
+  <div class="stat"><div class="stat-val c-g" id="s-acq">9</div><div class="stat-lbl">ACQ</div></div>
+  <div class="stat"><div class="stat-val c-am" id="s-wb">8</div><div class="stat-lbl">Winback</div></div>
+  <div class="stat"><div class="stat-val c-p" id="s-inne">1</div><div class="stat-lbl">Inne</div></div>
+</div>
+
+<div class="filters">
+  <div class="sw"><span class="si">🔍</span><input id="flt-q" placeholder="szukaj…" oninput="render()"></div>
+  <select class="flt" id="flt-srv" onchange="render()">
+    <option value="">Wszystkie serwisy</option>
+    <option>Onet</option><option>Onet Perfo</option><option>Newsweek</option><option>Forbes</option>
+    <option>Business Insider</option><option>Przegląd Sportowy</option><option>Auto Świat</option><option>Komputer Świat</option><option>Fakt</option>
+  </select>
+  <select class="flt" id="flt-seg" onchange="render()">
+    <option value="">Wszystkie segmenty</option>
+    <option>ACQ</option><option>Winback</option><option>Inne</option>
+  </select>
+  <button class="reset-btn" onclick="resetF()">✕</button>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th style="width:28px"></th>
+      <th onclick="sortBy('start')">Data startu ↕</th>
+      <th onclick="sortBy('end')">Data końca ↕</th>
+      <th onclick="sortBy('nazwa')">Nazwa oferty ↕</th>
+      <th onclick="sortBy('serwis')">Serwis ↕</th>
+      <th>Segment</th>
+      <th>ID oferty</th>
+      <th>ID terma</th>
+      <th>ID wariantu bramki</th>
+      <th>Rodzaj terma</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<!-- BULK MODAL -->
+<div class="modal-overlay" id="bulk-modal">
+  <div class="modal">
+    <h3>⚡ Wklej oferty masowo</h3>
+    <p>Skopiuj wiersze z Excela i wklej poniżej. Każda linia = jedna oferta, kolumny oddzielone tabulatorem lub średnikiem.</p>
+    <div class="schema">Data startu | Data końca | Nazwa oferty | Serwis | Segment | ID oferty | ID terma | ID wariantu bramki | Rodzaj terma</div>
+    <textarea id="bulk-txt" placeholder="12.02.2025&#9;19.02.2025&#9;Oferta 49zł&#9;Onet&#9;ACQ&#9;OFXXX&#9;TMXXX&#9;&#9;6 miesięcy - 49zł"></textarea>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="document.getElementById('bulk-modal').classList.remove('open')">Anuluj</button>
+      <button class="btn btn-accent" onclick="importBulk()">⚡ Importuj</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>＋ Dodaj ofertę</h3>
+    <p>Promo elementy i mailingi dodasz po rozwinięciu wiersza (▶).</p>
+    <div class="fg">
+      <div class="ff"><label>Data startu</label><input id="f-start" placeholder="DD.MM.RRRR"></div>
+      <div class="ff"><label>Data końca</label><input id="f-end" placeholder="DD.MM.RRRR"></div>
+      <div class="ff full"><label>Nazwa oferty</label><input id="f-nazwa" placeholder="np. [12.02.2025] Oferta promocyjna 49zł co pół roku"></div>
+      <div class="ff"><label>Serwis</label>
+        <select id="f-srv"><option>Onet</option><option>Onet Perfo</option><option>Newsweek</option><option>Forbes</option><option>Business Insider</option><option>Przegląd Sportowy</option><option>Auto Świat</option><option>Komputer Świat</option><option>Fakt</option></select>
+      </div>
+      <div class="ff"><label>Segment</label><select id="f-seg"><option>ACQ</option><option>Winback</option><option>Inne</option></select></div>
+      <div class="ff"><label>ID oferty</label><input id="f-ido" placeholder="OF…"></div>
+      <div class="ff"><label>ID terma</label><input id="f-idt" placeholder="TM…"></div>
+      <div class="ff"><label>ID wariantu bramki</label><input id="f-idb" placeholder="—"></div>
+      <div class="ff full"><label>Rodzaj terma</label><input id="f-rodzaj" placeholder="np. 6 miesięcy - 49zł"></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">Anuluj</button>
+      <button class="btn btn-accent" onclick="submitAdd()">Dodaj</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let uid=100, expanded=new Set();
+
+let offers=[
+  {id:1,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet",seg:"ACQ",idO:"OFCIAJD927G",idT:"ETMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[{nr:1,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE1",url:"",klik:"",ctr:""},{nr:2,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE2",url:"",klik:"",ctr:""},{nr:3,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE3",url:"",klik:"",ctr:""}],mails:[]},
+  {id:2,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet Perfo",seg:"ACQ",idO:"OF8CSEASAZ4O",idT:"TMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:3,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Newsweek",seg:"ACQ",idO:"OFR9OMH0YGSN",idT:"TMKTKDOOCBCO",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:4,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Forbes",seg:"ACQ",idO:"OF31NPWUYZAA",idT:"TM37QDY4YGU0B",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:5,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Business Insider",seg:"ACQ",idO:"IOFMSKO6Q79S",idT:"TMMXMB6D27X6PS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:6,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Przegląd Sportowy",seg:"ACQ",idO:"OFVZ0B37KFYT",idT:"TMSFTQ34DO8QAS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:7,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Auto Świat",seg:"ACQ",idO:"OFCHN1NTE1HW",idT:"TMCX44QOORDVKS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:8,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Komputer Świat",seg:"ACQ",idO:"OFFHTG0HCGLL",idT:"TMD1PVUDDPMVFakt",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:9,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Fakt",seg:"ACQ",idO:"OFGHVXZZZPL",idT:"TM33AMXYHMFK",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:10,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet",seg:"Winback",idO:"OFARG0OND32A",idT:"TMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:11,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Newsweek",seg:"Winback",idO:"OF2E6ERQ1VAV",idT:"TMKTKDOOCBCO",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:12,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Forbes",seg:"Winback",idO:"OFKEKSM09STG",idT:"TM37QDY4YGU0B",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:13,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Business Insider",seg:"Winback",idO:"OFRBNCGW1UIW",idT:"TMMXMB6D27X6PS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:14,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Przegląd Sportowy",seg:"Winback",idO:"OF7ZACXBHF7J",idT:"TMSFTQ34DO8QAS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:15,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Auto Świat",seg:"Winback",idO:"OF174LLL4QD9",idT:"TMCX44QOORDVKS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:16,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Komputer Świat",seg:"Winback",idO:"OF23SFEP4BZ2",idT:"TMD1PVUDDPMVFakt",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:17,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Fakt",seg:"Winback",idO:"OFD18VIWU538",idT:"TM33AMXYHMFK",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
+  {id:18,start:"",end:"",nazwa:"Oferta do realizacji kodu",serwis:"Onet",seg:"Inne",idO:"OFBWBSI3YM9F",idT:"TMEMJY8KLCGG",idB:"",rodzaj:"Kod promocyjny",pes:[],mails:[]}
+];
+
+function segBadge(s){
+  if(s==='ACQ') return '<span class="badge b-acq">ACQ</span>';
+  if(s==='Winback') return '<span class="badge b-wb">Winback</span>';
+  return '<span class="badge b-inne">Inne</span>';
+}
+
+function filtered(){
+  const q=document.getElementById('flt-q').value.toLowerCase();
+  const srv=document.getElementById('flt-srv').value;
+  const seg=document.getElementById('flt-seg').value;
+  return offers.filter(o=>
+    (!q||(o.nazwa+o.serwis+o.idO+o.idT).toLowerCase().includes(q))&&
+    (!srv||o.serwis===srv)&&(!seg||o.seg===seg)
+  );
+}
+
+function render(){
+  const data=filtered();
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+  data.forEach(o=>{
+    const isExp=expanded.has(o.id);
+    const tr=document.createElement('tr');
+    tr.className='dr'+(isExp?' exp':'');
+    tr.onclick=()=>toggle(o.id);
+    tr.innerHTML=`
+      <td><span class="arr">${isExp?'▼':'▶'}</span></td>
+      <td>${o.start||'<span class="empty">—</span>'}</td>
+      <td>${o.end||'<span class="empty">—</span>'}</td>
+      <td class="wrap" style="font-weight:500">${o.nazwa}</td>
+      <td>${o.serwis}</td>
+      <td>${segBadge(o.seg)}</td>
+      <td><span class="code">${o.idO||'—'}</span></td>
+      <td><span class="code">${o.idT||'—'}</span></td>
+      <td><span class="code">${o.idB||'<span class="empty" style="font-family:var(--sans)">—</span>'}</span></td>
+      <td>${o.rodzaj||'<span class="empty">—</span>'}</td>`;
+    tbody.appendChild(tr);
+
+    if(isExp){
+      const etr=document.createElement('tr');
+      etr.className='er';
+      etr.innerHTML=`<td colspan="10"><div class="ei">
+        <div class="es">
+          <h4>🎯 Promo Elementy</h4>
+          ${renderPE(o)}
+          <span class="al" onclick="event.stopPropagation();addPE(${o.id})">＋ dodaj promo element</span>
+        </div>
+        <div class="es">
+          <h4>📧 Mailingi</h4>
+          ${renderMail(o)}
+          <span class="al" onclick="event.stopPropagation();addMail(${o.id})">＋ dodaj mailing</span>
+        </div>
+      </div></td>`;
+      tbody.appendChild(etr);
+    }
+  });
+
+  document.getElementById('s-total').textContent=offers.length;
+  document.getElementById('s-acq').textContent=offers.filter(o=>o.seg==='ACQ').length;
+  document.getElementById('s-wb').textContent=offers.filter(o=>o.seg==='Winback').length;
+  document.getElementById('s-inne').textContent=offers.filter(o=>o.seg==='Inne').length;
+  document.getElementById('top-count').textContent=data.length+(data.length!==offers.length?` / ${offers.length}`:'')+' ofert';
+}
+
+function renderPE(o){
+  if(!o.pes.length) return '<span class="empty">Brak promo elementów</span>';
+  const rows=o.pes.map(p=>`<tr>
+    <td style="color:var(--text3);font-family:var(--mono);width:24px">${p.nr}</td>
+    <td><input class="ed" value="${p.nazwa}" placeholder="nazwa PE" onchange="updPE(${o.id},${p.nr},'nazwa',this.value)" onclick="event.stopPropagation()"></td>
+    <td><input class="ed" value="${p.tpcc}" placeholder="TPCC" onchange="updPE(${o.id},${p.nr},'tpcc',this.value)" onclick="event.stopPropagation()" style="font-family:var(--mono);font-size:11px"></td>
+    <td><input class="ed" value="${p.url}" placeholder="URL Piano" onchange="updPE(${o.id},${p.nr},'url',this.value)" onclick="event.stopPropagation()" style="font-family:var(--mono);font-size:11px;color:var(--accent2)"></td>
+    <td><input class="ed" value="${p.klik}" placeholder="—" onchange="updPE(${o.id},${p.nr},'klik',this.value)" onclick="event.stopPropagation()" style="width:70px"></td>
+    <td><input class="ed" value="${p.ctr}" placeholder="—" onchange="updPE(${o.id},${p.nr},'ctr',this.value)" onclick="event.stopPropagation()" style="width:60px"></td>
+  </tr>`).join('');
+  return `<table><thead><tr><th>#</th><th>Nazwa PE</th><th>TPCC</th><th>URL Piano</th><th>Kliknięcia</th><th>CTR</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderMail(o){
+  if(!o.mails.length) return '<span class="empty">Brak mailingów</span>';
+  const rows=o.mails.map((m,i)=>`<tr>
+    <td style="color:var(--text3);font-family:var(--mono);width:24px">${i+1}</td>
+    <td><input class="ed" value="${m.nazwa}" placeholder="nazwa" onchange="updMail(${o.id},${i},'nazwa',this.value)" onclick="event.stopPropagation()"></td>
+    <td><input class="ed" value="${m.date}" placeholder="DD.MM.RRRR" onchange="updMail(${o.id},${i},'date',this.value)" onclick="event.stopPropagation()" style="width:90px"></td>
+    <td><select class="ed" onchange="updMail(${o.id},${i},'sent',this.value)" onclick="event.stopPropagation()">
+      <option ${!m.sent?'selected':''}>—</option>
+      <option ${m.sent==='TAK'?'selected':''}>TAK</option>
+      <option ${m.sent==='NIE'?'selected':''}>NIE</option>
+      <option ${m.sent==='Zaplanowany'?'selected':''}>Zaplanowany</option>
+    </select></td>
+    <td><input class="ed" value="${m.count}" placeholder="—" onchange="updMail(${o.id},${i},'count',this.value)" onclick="event.stopPropagation()" style="width:80px"></td>
+  </tr>`).join('');
+  return `<table><thead><tr><th>#</th><th>Nazwa</th><th>Data wysyłki</th><th>Wysłany?</th><th>Liczba wysyłek</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function toggle(id){ expanded.has(id)?expanded.delete(id):expanded.add(id); render(); }
+function updPE(oid,nr,f,v){ const o=offers.find(x=>x.id===oid),p=o.pes.find(x=>x.nr===nr); if(p)p[f]=v; }
+function updMail(oid,i,f,v){ const o=offers.find(x=>x.id===oid); if(o.mails[i])o.mails[i][f]=v; }
+
+function addPE(oid){
+  const o=offers.find(x=>x.id===oid);
+  o.pes.push({nr:o.pes.length+1,nazwa:'',tpcc:'',url:'',klik:'',ctr:''});
+  expanded.add(oid); render();
+}
+function addMail(oid){
+  const o=offers.find(x=>x.id===oid);
+  o.mails.push({nazwa:'',date:'',sent:'',count:''});
+  expanded.add(oid); render();
+}
+
+function sortBy(k){ offers.sort((a,b)=>(a[k]||'').localeCompare(b[k]||'')); render(); }
+function resetF(){ ['flt-q','flt-srv','flt-seg'].forEach(id=>document.getElementById(id).value=''); render(); }
+
+function importBulk(){
+  const raw=document.getElementById('bulk-txt').value.trim();
+  if(!raw)return;
+  let added=0;
+  raw.split('\n').forEach(line=>{
+    const c=line.split(/\t|;/);
+    if(c.length<4)return;
+    if(c[0].toLowerCase().includes('data'))return;
+    uid++;
+    offers.push({id:uid,start:c[0]||'',end:c[1]||'',nazwa:c[2]||'',serwis:c[3]||'',seg:c[4]||'ACQ',
+      idO:c[5]||'',idT:c[6]||'',idB:c[7]||'',rodzaj:c[8]||'',pes:[],mails:[]});
+    added++;
+  });
+  document.getElementById('bulk-modal').classList.remove('open');
+  document.getElementById('bulk-txt').value='';
+  render();
+  if(added)alert(`✓ Zaimportowano ${added} ofert`);
+}
+
+function submitAdd(){
+  uid++;
+  offers.push({id:uid,
+    start:document.getElementById('f-start').value,
+    end:document.getElementById('f-end').value,
+    nazwa:document.getElementById('f-nazwa').value||'Nowa oferta',
+    serwis:document.getElementById('f-srv').value,
+    seg:document.getElementById('f-seg').value,
+    idO:document.getElementById('f-ido').value,
+    idT:document.getElementById('f-idt').value,
+    idB:document.getElementById('f-idb').value,
+    rodzaj:document.getElementById('f-rodzaj').value,
+    pes:[],mails:[]
+  });
+  document.getElementById('add-modal').classList.remove('open');
+  ['f-start','f-end','f-nazwa','f-ido','f-idt','f-idb','f-rodzaj'].forEach(id=>document.getElementById(id).value='');
+  render();
+}
+
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+render();
+</script>
+</body>
+</html>
