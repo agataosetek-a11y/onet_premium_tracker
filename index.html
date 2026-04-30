@@ -6,70 +6,84 @@
 <title>Onet Premium — Tracker Zmian Oferty</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;--border:#2a2a38;--border2:#3a3a50;--text:#e8e8f0;--text2:#8888aa;--text3:#555570;--accent:#5b6af0;--accent2:#7b8aff;--green:#2dd4a0;--amber:#f0b429;--purple:#b06af0;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;--border:#2a2a38;--border2:#3a3a50;
+  --text:#e8e8f0;--text2:#8888aa;--text3:#555570;
+  --accent:#5b6af0;--accent2:#7b8aff;
+  --green:#2dd4a0;--amber:#f0b429;--purple:#b06af0;--red:#f06a6a;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:13px;}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
 
+/* ── TOPBAR ── */
 .topbar{display:flex;align-items:center;gap:16px;padding:0 24px;height:52px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
 .logo-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.08em;font-family:var(--mono);}
 .logo-title{font-weight:600;font-size:14px;}
 .logo-sub{color:var(--text2);font-size:12px;border-left:1px solid var(--border2);padding-left:12px;}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
-.count-pill{color:var(--text2);font-size:12px;font-family:var(--mono);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.count-pill{color:var(--text2);font-size:12px;font-family:var(--mono);margin-right:4px;}
 
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;}
-.btn-accent{background:var(--accent);color:#fff;}.btn-accent:hover{background:var(--accent2);}
-.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-outline:hover{color:var(--text);border-color:var(--accent);}
-.btn-amber{background:rgba(240,180,41,.15);color:var(--amber);border:1px solid rgba(240,180,41,.3);}.btn-amber:hover{background:rgba(240,180,41,.25);}
+/* ── SYNC STATUS ── */
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);display:inline-block;margin-right:5px;transition:background .3s;}
+.sync-dot.ok{background:var(--green);}
+.sync-dot.spin{background:var(--amber);animation:pulse .8s infinite;}
+.sync-dot.err{background:var(--red);}
+.sync-label{font-size:11px;color:var(--text3);font-family:var(--mono);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;white-space:nowrap;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-accent{background:var(--accent);color:#fff;}.btn-accent:hover:not(:disabled){background:var(--accent2);}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-outline:hover:not(:disabled){color:var(--text);border-color:var(--accent);}
+.btn-green{background:rgba(45,212,160,.15);color:var(--green);border:1px solid rgba(45,212,160,.3);}.btn-green:hover:not(:disabled){background:rgba(45,212,160,.25);}
+.btn-purple{background:rgba(176,106,240,.15);color:var(--purple);border:1px solid rgba(176,106,240,.3);}.btn-purple:hover:not(:disabled){background:rgba(176,106,240,.25);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);}
+.tab{padding:12px 24px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.05em;}
+.tab:hover{color:var(--text2);}.tab.active{color:var(--accent2);border-bottom-color:var(--accent);}
+
+/* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
 .stat{padding:18px 24px;border-right:1px solid var(--border);}.stat:last-child{border-right:none;}
 .stat-val{font-size:28px;font-weight:600;font-family:var(--mono);line-height:1;}
 .c-a{color:var(--accent2);}.c-g{color:var(--green);}.c-am{color:var(--amber);}.c-p{color:var(--purple);}
 .stat-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-top:5px;}
 
+/* ── FILTERS ── */
 .filters{display:flex;align-items:center;gap:8px;padding:12px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .sw{position:relative;}
 .sw input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 10px 6px 28px;color:var(--text);font-size:12px;font-family:var(--sans);width:200px;outline:none;}
 .sw input:focus{border-color:var(--accent);}.sw input::placeholder{color:var(--text3);}
 .si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px;}
-select.flt{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 26px 6px 10px;color:var(--text2);font-size:12px;font-family:var(--sans);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555570'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+select.flt{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 26px 6px 10px;color:var(--text2);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555570'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
 select.flt:focus{border-color:var(--accent);color:var(--text);}
 .reset-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:4px;}.reset-btn:hover{color:var(--text);}
 
-.table-wrap{overflow-x:auto;max-height:calc(100vh - 175px);overflow-y:auto;}
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;max-height:calc(100vh - 240px);overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
-
-th{
-  position:sticky;top:0;z-index:10;
-  background:var(--surface2);
-  padding:10px 12px;text-align:left;
-  font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--text3);border-bottom:2px solid var(--border2);
-  white-space:nowrap;cursor:pointer;user-select:none;
-}
+th{position:sticky;top:0;z-index:10;background:var(--surface2);padding:10px 12px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border2);white-space:nowrap;cursor:pointer;user-select:none;}
 th:hover{color:var(--text2);}
-
 tbody tr.dr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer;}
 tbody tr.dr:hover td{background:rgba(255,255,255,.02);}
-tbody tr.dr.exp td{background:rgba(91,106,240,.05);}
+tbody tr.dr.exp td{background:rgba(91,106,240,.04);}
 td{padding:9px 12px;vertical-align:middle;white-space:nowrap;}
-td.wrap{white-space:normal;max-width:220px;line-height:1.4;}
-
-tr.er td{padding:0;background:rgba(91,106,240,.03);border-bottom:1px solid var(--border);}
-.ei{padding:14px 16px 18px 44px;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+td.wrap{white-space:normal;max-width:260px;line-height:1.4;}
+tr.er td{padding:0;background:rgba(91,106,240,.02);border-bottom:1px solid var(--border);}
+.ei{padding:14px 16px 18px 44px;}
 .es h4{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.es table{font-size:12px;width:100%;}
-.es th{position:static;top:auto;font-size:10px;padding:6px 8px;color:var(--text3);border-bottom:1px solid var(--border);background:transparent;letter-spacing:.06em;}
-.es td{padding:6px 8px;border-bottom:1px solid rgba(42,42,56,.5);white-space:normal;}
-.al{color:var(--accent2);font-size:11px;cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:4px;}
-.al:hover{text-decoration:underline;}
+.es table{font-size:12px;width:auto;min-width:600px;}
+.es th{position:static;font-size:10px;padding:6px 10px;color:var(--text3);border-bottom:1px solid var(--border);background:transparent;letter-spacing:.06em;}
+.es td{padding:7px 10px;border-bottom:1px solid rgba(42,42,56,.5);vertical-align:middle;}
+.es tr:last-child td{border-bottom:none;}
+.pe-empty{color:var(--text3);font-style:italic;font-size:11px;padding:10px 0;}
 
-.ed{background:none;border:none;color:var(--text);font-family:var(--sans);font-size:12px;width:100%;outline:none;padding:2px 4px;border-radius:3px;}
-.ed:hover{background:rgba(255,255,255,.04);}.ed:focus{background:var(--surface);border:1px solid var(--accent);}
-select.ed{appearance:none;cursor:pointer;}
-
+/* ── BADGES & CODES ── */
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:var(--mono);}
 .b-acq{background:rgba(45,212,160,.12);color:var(--green);border:1px solid rgba(45,212,160,.2);}
 .b-wb{background:rgba(240,180,41,.12);color:var(--amber);border:1px solid rgba(240,180,41,.2);}
@@ -78,25 +92,68 @@ select.ed{appearance:none;cursor:pointer;}
 .empty{color:var(--text3);font-style:italic;font-size:11px;}
 .arr{color:var(--text3);font-size:10px;transition:transform .2s;display:inline-block;}
 .exp .arr{transform:rotate(90deg);}
+.pe-count{font-family:var(--mono);font-size:11px;color:var(--text3);background:rgba(255,255,255,.04);padding:2px 6px;border-radius:10px;margin-left:4px;}
+.pe-count.has-pe{color:var(--accent2);background:rgba(91,106,240,.15);}
 
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+/* ── PE TAB ── */
+.pe-table-wrap{overflow-x:auto;max-height:calc(100vh - 240px);overflow-y:auto;}
+
+/* ── LOADING OVERLAY ── */
+.loading-bar{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--green));background-size:200%;animation:bar 1.2s linear infinite;z-index:500;display:none;}
+.loading-bar.show{display:block;}
+@keyframes bar{0%{background-position:0%}100%{background-position:200%}}
+
+/* ── SETUP BANNER ── */
+.setup-banner{background:rgba(240,180,41,.07);border-bottom:1px solid rgba(240,180,41,.2);padding:10px 24px;display:flex;align-items:center;gap:12px;}
+.setup-banner p{font-size:12px;color:var(--amber);flex:1;}
+.setup-banner a{color:var(--amber);text-decoration:underline;}
+.setup-banner.hidden{display:none;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;}
-.modal h3{font-size:15px;font-weight:600;margin-bottom:6px;}
-.modal p{color:var(--text2);font-size:12px;margin-bottom:14px;}
-.modal textarea{width:100%;height:130px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:10px;color:var(--text);font-family:var(--mono);font-size:11px;resize:vertical;outline:none;}
-.modal textarea:focus{border-color:var(--accent);}
-.schema{font-size:10px;color:var(--text3);font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin:10px 0;line-height:1.8;}
-.mf{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:24px;width:580px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:5px;}
+.modal .modal-sub{color:var(--text2);font-size:12px;margin-bottom:18px;line-height:1.5;}
+.mf{display:flex;gap:8px;margin-top:18px;justify-content:flex-end;}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
 .ff label{display:block;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-.ff input,.ff select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:7px 10px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;}
+.ff input,.ff select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:8px 10px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;transition:border-color .15s;}
 .ff input:focus,.ff select:focus{border-color:var(--accent);}
 .ff.full{grid-column:1/-1;}
+.ff select option{background:var(--surface2);}
+.divider{grid-column:1/-1;height:1px;background:var(--border);margin:6px 0;}
+.section-label{grid-column:1/-1;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-top:4px;}
+.offer-selector{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.offer-selector-head{padding:10px 14px;font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);}
+.offer-list{max-height:190px;overflow-y:auto;}
+.offer-opt{display:flex;align-items:center;gap:12px;padding:9px 14px;cursor:pointer;transition:background .1s;border-bottom:1px solid rgba(42,42,56,.5);}
+.offer-opt:last-child{border-bottom:none;}
+.offer-opt:hover{background:rgba(255,255,255,.03);}
+.offer-opt.selected{background:rgba(91,106,240,.1);border-left:3px solid var(--accent);}
+.offer-opt.selected .offer-opt-name{color:var(--accent2);}
+.offer-opt-name{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.offer-opt-meta{display:flex;gap:6px;flex-shrink:0;align-items:center;}
+.step-label{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:12px 18px;font-size:12px;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:360px;line-height:1.5;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.ok{border-color:rgba(45,212,160,.4);color:var(--green);}
+.toast.err{border-color:rgba(240,106,106,.4);color:var(--red);}
+.toast.warn{border-color:rgba(240,180,41,.4);color:var(--amber);}
+
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#4a4a60;}
 </style>
 </head>
 <body>
 
+<div class="loading-bar" id="loading-bar"></div>
+
+<!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:10px;">
     <span class="logo-badge">ONET</span>
@@ -104,25 +161,47 @@ select.ed{appearance:none;cursor:pointer;}
     <span class="logo-sub">Tracker Zmian Oferty</span>
   </div>
   <div class="topbar-right">
-    <span class="count-pill" id="top-count">18 ofert</span>
-    <button class="btn btn-amber" onclick="document.getElementById('bulk-modal').classList.add('open')">⚡ Wklej masowo</button>
-    <button class="btn btn-accent" onclick="document.getElementById('add-modal').classList.add('open')">＋ Dodaj ofertę</button>
+    <span class="sync-dot" id="sync-dot"></span>
+    <span class="sync-label" id="sync-label">—</span>
+    <span class="count-pill" id="top-count" style="margin-left:8px;">0 ofert</span>
+    <button class="btn btn-outline btn-sm" onclick="fetchData()" title="Odśwież dane z Google Sheets">↺ Odśwież</button>
+    <button class="btn btn-purple btn-sm" onclick="openModal('pe-modal')">＋ Promo element</button>
+    <button class="btn btn-accent btn-sm" onclick="openModal('add-modal')">＋ Dodaj ofertę</button>
   </div>
 </div>
 
-<div class="stats">
-  <div class="stat"><div class="stat-val c-a" id="s-total">18</div><div class="stat-lbl">Ofert łącznie</div></div>
-  <div class="stat"><div class="stat-val c-g" id="s-acq">9</div><div class="stat-lbl">ACQ</div></div>
-  <div class="stat"><div class="stat-val c-am" id="s-wb">8</div><div class="stat-lbl">Winback</div></div>
-  <div class="stat"><div class="stat-val c-p" id="s-inne">1</div><div class="stat-lbl">Inne</div></div>
+<!-- SETUP BANNER — widoczny dopóki nie wkleisz URL skryptu -->
+<div class="setup-banner" id="setup-banner">
+  <span style="font-size:16px;">⚠️</span>
+  <p>
+    <strong>Konfiguracja wymagana:</strong> wklej URL wdrożonego Apps Script do zmiennej <code>SCRIPT_URL</code> w sekcji &lt;script&gt; na dole tej strony.
+    <a href="https://docs.google.com/spreadsheets/d/1vAPgdFygy3BqAZJ4awy39dX3w7PKlnVVqGbaSkwXfeI" target="_blank">→ Otwórz arkusz Google Sheets</a>
+  </p>
+  <button class="btn btn-outline btn-sm" onclick="document.getElementById('setup-banner').classList.add('hidden')">Ukryj</button>
 </div>
 
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-oferty" onclick="switchTab('oferty')">Oferty</div>
+  <div class="tab" id="tab-pe" onclick="switchTab('pe')">Promo Elementy</div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-val c-a" id="s-total">0</div><div class="stat-lbl">Ofert łącznie</div></div>
+  <div class="stat"><div class="stat-val c-g" id="s-acq">0</div><div class="stat-lbl">ACQ</div></div>
+  <div class="stat"><div class="stat-val c-am" id="s-wb">0</div><div class="stat-lbl">Winback</div></div>
+  <div class="stat"><div class="stat-val c-p" id="s-inne">0</div><div class="stat-lbl">Inne</div></div>
+</div>
+
+<!-- FILTERS -->
 <div class="filters">
   <div class="sw"><span class="si">🔍</span><input id="flt-q" placeholder="szukaj…" oninput="render()"></div>
   <select class="flt" id="flt-srv" onchange="render()">
     <option value="">Wszystkie serwisy</option>
     <option>Onet</option><option>Onet Perfo</option><option>Newsweek</option><option>Forbes</option>
-    <option>Business Insider</option><option>Przegląd Sportowy</option><option>Auto Świat</option><option>Komputer Świat</option><option>Fakt</option>
+    <option>Business Insider</option><option>Przegląd Sportowy</option><option>Auto Świat</option>
+    <option>Komputer Świat</option><option>Fakt</option>
   </select>
   <select class="flt" id="flt-seg" onchange="render()">
     <option value="">Wszystkie segmenty</option>
@@ -131,45 +210,53 @@ select.ed{appearance:none;cursor:pointer;}
   <button class="reset-btn" onclick="resetF()">✕</button>
 </div>
 
-<div class="table-wrap">
-<table>
-  <thead>
-    <tr>
-      <th style="width:28px"></th>
-      <th onclick="sortBy('start')">Data startu ↕</th>
-      <th onclick="sortBy('end')">Data końca ↕</th>
-      <th onclick="sortBy('nazwa')">Nazwa oferty ↕</th>
-      <th onclick="sortBy('serwis')">Serwis ↕</th>
-      <th>Segment</th>
-      <th>ID oferty</th>
-      <th>ID terma</th>
-      <th>ID wariantu bramki</th>
-      <th>Rodzaj terma</th>
-    </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
-</table>
-</div>
-
-<!-- BULK MODAL -->
-<div class="modal-overlay" id="bulk-modal">
-  <div class="modal">
-    <h3>⚡ Wklej oferty masowo</h3>
-    <p>Skopiuj wiersze z Excela i wklej poniżej. Każda linia = jedna oferta, kolumny oddzielone tabulatorem lub średnikiem.</p>
-    <div class="schema">Data startu | Data końca | Nazwa oferty | Serwis | Segment | ID oferty | ID terma | ID wariantu bramki | Rodzaj terma</div>
-    <textarea id="bulk-txt" placeholder="12.02.2025&#9;19.02.2025&#9;Oferta 49zł&#9;Onet&#9;ACQ&#9;OFXXX&#9;TMXXX&#9;&#9;6 miesięcy - 49zł"></textarea>
-    <div class="mf">
-      <button class="btn btn-outline" onclick="document.getElementById('bulk-modal').classList.remove('open')">Anuluj</button>
-      <button class="btn btn-accent" onclick="importBulk()">⚡ Importuj</button>
-    </div>
+<!-- OFERTY VIEW -->
+<div id="view-oferty">
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th style="width:28px"></th>
+        <th onclick="sortBy('Data startu')">Data startu ↕</th>
+        <th onclick="sortBy('Data końca')">Data końca ↕</th>
+        <th onclick="sortBy('Nazwa oferty')">Nazwa oferty ↕</th>
+        <th onclick="sortBy('Serwis')">Serwis ↕</th>
+        <th>Segment</th>
+        <th>ID oferty</th>
+        <th>ID terma</th>
+        <th>ID war. bramki</th>
+        <th>Rodzaj terma</th>
+        <th>PE</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
   </div>
 </div>
 
-<!-- ADD MODAL -->
+<!-- PE VIEW -->
+<div id="view-pe" style="display:none;">
+  <div class="pe-table-wrap">
+    <table>
+      <thead><tr>
+        <th onclick="sortPE('Serwis')">Serwis ↕</th>
+        <th onclick="sortPE('Segment')">Segment ↕</th>
+        <th onclick="sortPE('Data startu')">Data startu ↕</th>
+        <th onclick="sortPE('Data końca')">Data końca ↕</th>
+        <th onclick="sortPE('Nazwa oferty')">Nazwa oferty ↕</th>
+        <th onclick="sortPE('Nr PE')">Nr PE ↕</th>
+        <th>Nazwa PE</th>
+        <th>TPCC</th>
+        <th>URL Piano</th>
+      </tr></thead>
+      <tbody id="tbody-pe"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: DODAJ OFERTĘ -->
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
     <h3>＋ Dodaj ofertę</h3>
-    <p>Promo elementy i mailingi dodasz po rozwinięciu wiersza (▶).</p>
+    <p class="modal-sub">Dane zostaną zapisane do Google Sheets. Promo elementy dodasz przez „＋ Promo element".</p>
     <div class="fg">
       <div class="ff"><label>Data startu</label><input id="f-start" placeholder="DD.MM.RRRR"></div>
       <div class="ff"><label>Data końca</label><input id="f-end" placeholder="DD.MM.RRRR"></div>
@@ -177,195 +264,429 @@ select.ed{appearance:none;cursor:pointer;}
       <div class="ff"><label>Serwis</label>
         <select id="f-srv"><option>Onet</option><option>Onet Perfo</option><option>Newsweek</option><option>Forbes</option><option>Business Insider</option><option>Przegląd Sportowy</option><option>Auto Świat</option><option>Komputer Świat</option><option>Fakt</option></select>
       </div>
-      <div class="ff"><label>Segment</label><select id="f-seg"><option>ACQ</option><option>Winback</option><option>Inne</option></select></div>
+      <div class="ff"><label>Segment</label>
+        <select id="f-seg"><option>ACQ</option><option>Winback</option><option>Inne</option></select>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Identyfikatory</div>
       <div class="ff"><label>ID oferty</label><input id="f-ido" placeholder="OF…"></div>
       <div class="ff"><label>ID terma</label><input id="f-idt" placeholder="TM…"></div>
       <div class="ff"><label>ID wariantu bramki</label><input id="f-idb" placeholder="—"></div>
-      <div class="ff full"><label>Rodzaj terma</label><input id="f-rodzaj" placeholder="np. 6 miesięcy - 49zł"></div>
+      <div class="ff"><label>Rodzaj terma</label><input id="f-rodzaj" placeholder="np. 6 miesięcy - 49zł"></div>
     </div>
     <div class="mf">
-      <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">Anuluj</button>
-      <button class="btn btn-accent" onclick="submitAdd()">Dodaj</button>
+      <button class="btn btn-outline" onclick="closeModal('add-modal')">Anuluj</button>
+      <button class="btn btn-accent" id="btn-add-offer" onclick="submitAdd()">💾 Zapisz w Sheets</button>
     </div>
   </div>
 </div>
 
+<!-- MODAL: DODAJ PROMO ELEMENT -->
+<div class="modal-overlay" id="pe-modal">
+  <div class="modal">
+    <h3>＋ Dodaj promo element</h3>
+    <p class="modal-sub">Wybierz ofertę z listy, a następnie wypełnij dane promo elementu.</p>
+
+    <div class="step-label">Krok 1 — Wybierz ofertę</div>
+    <div class="offer-selector">
+      <div class="offer-selector-head">Dostępne oferty (<span id="offer-list-count">0</span>)</div>
+      <div class="offer-list" id="offer-list"></div>
+    </div>
+    <div id="selected-offer-info" style="display:none;background:rgba(91,106,240,.08);border:1px solid rgba(91,106,240,.25);border-radius:5px;padding:10px 14px;font-size:12px;margin-bottom:16px;">
+      <span style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Wybrana oferta:</span><br>
+      <span id="selected-offer-text" style="color:var(--text);font-weight:500;line-height:1.8;"></span>
+    </div>
+
+    <div id="pe-fields" style="opacity:.35;pointer-events:none;transition:opacity .2s;">
+      <div class="step-label">Krok 2 — Dane promo elementu</div>
+      <div class="fg">
+        <div class="ff full"><label>Nazwa promo elementu</label><input id="pe-nazwa" placeholder="np. Banner górny strony głównej"></div>
+        <div class="ff full"><label>TPCC</label><input id="pe-tpcc" placeholder="np. 20250212_Oferta49zlPolRoku_ACQ_Onet_PE1" style="font-family:var(--mono);font-size:11px;"></div>
+        <div class="ff full"><label>URL Piano</label><input id="pe-url" placeholder="https://…" style="font-family:var(--mono);font-size:11px;"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="closeModal('pe-modal')">Anuluj</button>
+      <button class="btn btn-purple" id="pe-submit-btn" onclick="submitPE()" disabled>💾 Zapisz w Sheets</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-let uid=100, expanded=new Set();
+// ══════════════════════════════════════════════════════════
+//  ⚙️  KONFIGURACJA — wklej tutaj URL po wdrożeniu skryptu
+// ══════════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1iv4i15PrbVj7ZQrxORlRWOeD8PSLzSF_8rKkh_poBhulQeeYaKa99wx7vK5tuaSMxw/exec';   // ← np. 'https://script.google.com/macros/s/AKfy.../exec'
+const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1vAPgdFygy3BqAZJ4awy39dX3w7PKlnVVqGbaSkwXfeI';
+// ══════════════════════════════════════════════════════════
 
-let offers=[
-  {id:1,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet",seg:"ACQ",idO:"OFCIAJD927G",idT:"ETMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[{nr:1,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE1",url:"",klik:"",ctr:""},{nr:2,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE2",url:"",klik:"",ctr:""},{nr:3,nazwa:"",tpcc:"20250212_Oferta49zlPolRoku_ACQ_Onet_PE3",url:"",klik:"",ctr:""}],mails:[]},
-  {id:2,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet Perfo",seg:"ACQ",idO:"OF8CSEASAZ4O",idT:"TMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:3,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Newsweek",seg:"ACQ",idO:"OFR9OMH0YGSN",idT:"TMKTKDOOCBCO",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:4,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Forbes",seg:"ACQ",idO:"OF31NPWUYZAA",idT:"TM37QDY4YGU0B",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:5,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Business Insider",seg:"ACQ",idO:"IOFMSKO6Q79S",idT:"TMMXMB6D27X6PS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:6,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Przegląd Sportowy",seg:"ACQ",idO:"OFVZ0B37KFYT",idT:"TMSFTQ34DO8QAS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:7,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Auto Świat",seg:"ACQ",idO:"OFCHN1NTE1HW",idT:"TMCX44QOORDVKS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:8,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Komputer Świat",seg:"ACQ",idO:"OFFHTG0HCGLL",idT:"TMD1PVUDDPMVFakt",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:9,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Fakt",seg:"ACQ",idO:"OFGHVXZZZPL",idT:"TM33AMXYHMFK",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:10,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Onet",seg:"Winback",idO:"OFARG0OND32A",idT:"TMNA934D8YTG",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:11,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Newsweek",seg:"Winback",idO:"OF2E6ERQ1VAV",idT:"TMKTKDOOCBCO",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:12,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Forbes",seg:"Winback",idO:"OFKEKSM09STG",idT:"TM37QDY4YGU0B",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:13,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Business Insider",seg:"Winback",idO:"OFRBNCGW1UIW",idT:"TMMXMB6D27X6PS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:14,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Przegląd Sportowy",seg:"Winback",idO:"OF7ZACXBHF7J",idT:"TMSFTQ34DO8QAS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:15,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Auto Świat",seg:"Winback",idO:"OF174LLL4QD9",idT:"TMCX44QOORDVKS",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:16,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Komputer Świat",seg:"Winback",idO:"OF23SFEP4BZ2",idT:"TMD1PVUDDPMVFakt",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:17,start:"12.02.2025",end:"19.02.2025",nazwa:"[12.02.2025] Oferta promocyjna 49zł co pół roku",serwis:"Fakt",seg:"Winback",idO:"OFD18VIWU538",idT:"TM33AMXYHMFK",idB:"",rodzaj:"6 miesięcy - 49zł",pes:[],mails:[]},
-  {id:18,start:"",end:"",nazwa:"Oferta do realizacji kodu",serwis:"Onet",seg:"Inne",idO:"OFBWBSI3YM9F",idT:"TMEMJY8KLCGG",idB:"",rodzaj:"Kod promocyjny",pes:[],mails:[]}
-];
+let offers        = [];
+let promoElements = [];
+let expanded      = new Set();
+let selectedOffer = null;
+let currentTab    = 'oferty';
 
-function segBadge(s){
-  if(s==='ACQ') return '<span class="badge b-acq">ACQ</span>';
-  if(s==='Winback') return '<span class="badge b-wb">Winback</span>';
+// ── SYNC INDICATOR ──────────────────────────────────────
+function syncState(state, msg) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = msg;
+}
+
+// ── LOADING BAR ─────────────────────────────────────────
+function setLoading(on) {
+  document.getElementById('loading-bar').className = 'loading-bar' + (on ? ' show' : '');
+}
+
+// ── TOAST ───────────────────────────────────────────────
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { el.className = 'toast'; }, 3500);
+}
+
+// ── FETCH DATA FROM SHEETS ──────────────────────────────
+async function fetchData() {
+  if (!SCRIPT_URL) {
+    syncState('err', 'brak URL skryptu');
+    return;
+  }
+  setLoading(true);
+  syncState('spin', 'wczytywanie…');
+  try {
+    const res  = await fetch(SCRIPT_URL, { redirect: 'follow' });
+    const json = await res.json();
+
+    // Map Sheets column names → internal fields
+    offers = (json.offers || []).map(o => ({
+      id:     o['ID'],
+      start:  o['Data startu'],
+      end:    o['Data końca'],
+      nazwa:  o['Nazwa oferty'],
+      serwis: o['Serwis'],
+      seg:    o['Segment'],
+      idO:    o['ID oferty'],
+      idT:    o['ID terma'],
+      idB:    o['ID wariantu bramki'],
+      rodzaj: o['Rodzaj terma'],
+    }));
+
+    promoElements = (json.promoElements || []).map(p => ({
+      id:          p['ID'],
+      offerRowId:  p['ID oferty ref'],
+      serwis:      p['Serwis'],
+      segment:     p['Segment'],
+      start:       p['Data startu'],
+      end:         p['Data końca'],
+      ofertaNazwa: p['Nazwa oferty'],
+      nr:          p['Nr PE'],
+      nazwa:       p['Nazwa PE'],
+      tpcc:        p['TPCC'],
+      url:         p['URL Piano'],
+    }));
+
+    render();
+    syncState('ok', `zsync. ${new Date().toLocaleTimeString('pl')}`);
+    document.getElementById('setup-banner').classList.add('hidden');
+  } catch(e) {
+    syncState('err', 'błąd połączenia');
+    toast('Nie udało się pobrać danych ze Sheets. Sprawdź URL skryptu.', 'err');
+    console.error(e);
+  }
+  setLoading(false);
+}
+
+// ── POST TO SHEETS ──────────────────────────────────────
+async function postToSheets(payload) {
+  if (!SCRIPT_URL) {
+    toast('Brak URL Apps Script — dane nie zostały zapisane.', 'warn');
+    return null;
+  }
+  const res  = await fetch(SCRIPT_URL, {
+    method:  'POST',
+    redirect:'follow',
+    body:    JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+// ── RENDER ───────────────────────────────────────────────
+function segBadge(s) {
+  if (s === 'ACQ')     return '<span class="badge b-acq">ACQ</span>';
+  if (s === 'Winback') return '<span class="badge b-wb">Winback</span>';
   return '<span class="badge b-inne">Inne</span>';
 }
 
-function filtered(){
-  const q=document.getElementById('flt-q').value.toLowerCase();
-  const srv=document.getElementById('flt-srv').value;
-  const seg=document.getElementById('flt-seg').value;
-  return offers.filter(o=>
-    (!q||(o.nazwa+o.serwis+o.idO+o.idT).toLowerCase().includes(q))&&
-    (!srv||o.serwis===srv)&&(!seg||o.seg===seg)
+function filtered() {
+  const q   = document.getElementById('flt-q').value.toLowerCase();
+  const srv = document.getElementById('flt-srv').value;
+  const seg = document.getElementById('flt-seg').value;
+  return offers.filter(o =>
+    (!q || (o.nazwa + o.serwis + o.idO + o.idT).toLowerCase().includes(q)) &&
+    (!srv || o.serwis === srv) && (!seg || o.seg === seg)
   );
 }
 
-function render(){
-  const data=filtered();
-  const tbody=document.getElementById('tbody');
-  tbody.innerHTML='';
-  data.forEach(o=>{
-    const isExp=expanded.has(o.id);
-    const tr=document.createElement('tr');
-    tr.className='dr'+(isExp?' exp':'');
-    tr.onclick=()=>toggle(o.id);
-    tr.innerHTML=`
-      <td><span class="arr">${isExp?'▼':'▶'}</span></td>
-      <td>${o.start||'<span class="empty">—</span>'}</td>
-      <td>${o.end||'<span class="empty">—</span>'}</td>
+function render() {
+  if (currentTab === 'oferty') renderOferty();
+  else renderPETab();
+  updateStats();
+}
+
+function renderOferty() {
+  const data  = filtered();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  data.forEach(o => {
+    const isExp = expanded.has(o.id);
+    const pes   = promoElements.filter(p => p.offerRowId === o.id || p.ofertaNazwa === o.nazwa && p.serwis === o.serwis);
+    const tr = document.createElement('tr');
+    tr.className = 'dr' + (isExp ? ' exp' : '');
+    tr.onclick = () => toggle(o.id);
+    tr.innerHTML = `
+      <td><span class="arr">${isExp ? '▼' : '▶'}</span></td>
+      <td>${o.start || '<span class="empty">—</span>'}</td>
+      <td>${o.end   || '<span class="empty">—</span>'}</td>
       <td class="wrap" style="font-weight:500">${o.nazwa}</td>
       <td>${o.serwis}</td>
       <td>${segBadge(o.seg)}</td>
-      <td><span class="code">${o.idO||'—'}</span></td>
-      <td><span class="code">${o.idT||'—'}</span></td>
-      <td><span class="code">${o.idB||'<span class="empty" style="font-family:var(--sans)">—</span>'}</span></td>
-      <td>${o.rodzaj||'<span class="empty">—</span>'}</td>`;
+      <td><span class="code">${o.idO || '—'}</span></td>
+      <td><span class="code">${o.idT || '—'}</span></td>
+      <td><span class="code">${o.idB || '—'}</span></td>
+      <td>${o.rodzaj || '<span class="empty">—</span>'}</td>
+      <td><span class="pe-count ${pes.length ? 'has-pe' : ''}">${pes.length} PE</span></td>`;
     tbody.appendChild(tr);
-
-    if(isExp){
-      const etr=document.createElement('tr');
-      etr.className='er';
-      etr.innerHTML=`<td colspan="10"><div class="ei">
-        <div class="es">
-          <h4>🎯 Promo Elementy</h4>
-          ${renderPE(o)}
-          <span class="al" onclick="event.stopPropagation();addPE(${o.id})">＋ dodaj promo element</span>
-        </div>
-        <div class="es">
-          <h4>📧 Mailingi</h4>
-          ${renderMail(o)}
-          <span class="al" onclick="event.stopPropagation();addMail(${o.id})">＋ dodaj mailing</span>
-        </div>
-      </div></td>`;
+    if (isExp) {
+      const etr = document.createElement('tr');
+      etr.className = 'er';
+      etr.innerHTML = `<td colspan="11"><div class="ei"><div class="es">
+        <h4>🎯 Promo elementy</h4>
+        ${renderPEInline(pes)}
+      </div></div></td>`;
       tbody.appendChild(etr);
     }
   });
-
-  document.getElementById('s-total').textContent=offers.length;
-  document.getElementById('s-acq').textContent=offers.filter(o=>o.seg==='ACQ').length;
-  document.getElementById('s-wb').textContent=offers.filter(o=>o.seg==='Winback').length;
-  document.getElementById('s-inne').textContent=offers.filter(o=>o.seg==='Inne').length;
-  document.getElementById('top-count').textContent=data.length+(data.length!==offers.length?` / ${offers.length}`:'')+' ofert';
+  const total = offers.length;
+  document.getElementById('top-count').textContent =
+    data.length + (data.length !== total ? ` / ${total}` : '') + ' ofert';
 }
 
-function renderPE(o){
-  if(!o.pes.length) return '<span class="empty">Brak promo elementów</span>';
-  const rows=o.pes.map(p=>`<tr>
-    <td style="color:var(--text3);font-family:var(--mono);width:24px">${p.nr}</td>
-    <td><input class="ed" value="${p.nazwa}" placeholder="nazwa PE" onchange="updPE(${o.id},${p.nr},'nazwa',this.value)" onclick="event.stopPropagation()"></td>
-    <td><input class="ed" value="${p.tpcc}" placeholder="TPCC" onchange="updPE(${o.id},${p.nr},'tpcc',this.value)" onclick="event.stopPropagation()" style="font-family:var(--mono);font-size:11px"></td>
-    <td><input class="ed" value="${p.url}" placeholder="URL Piano" onchange="updPE(${o.id},${p.nr},'url',this.value)" onclick="event.stopPropagation()" style="font-family:var(--mono);font-size:11px;color:var(--accent2)"></td>
-    <td><input class="ed" value="${p.klik}" placeholder="—" onchange="updPE(${o.id},${p.nr},'klik',this.value)" onclick="event.stopPropagation()" style="width:70px"></td>
-    <td><input class="ed" value="${p.ctr}" placeholder="—" onchange="updPE(${o.id},${p.nr},'ctr',this.value)" onclick="event.stopPropagation()" style="width:60px"></td>
+function renderPEInline(pes) {
+  if (!pes.length) return '<div class="pe-empty">Brak promo elementów — dodaj przez „＋ Promo element".</div>';
+  const rows = pes.map(p => `<tr>
+    <td style="color:var(--text3);font-family:var(--mono);width:28px;font-size:11px;">${p.nr}</td>
+    <td style="font-weight:500;">${p.nazwa || '<span class="empty">—</span>'}</td>
+    <td><span class="code">${p.tpcc || '—'}</span></td>
+    <td>${p.url ? `<a href="${p.url}" target="_blank" style="color:var(--accent2);font-family:var(--mono);font-size:11px;text-decoration:none;" onclick="event.stopPropagation()">${p.url}</a>` : '—'}</td>
   </tr>`).join('');
-  return `<table><thead><tr><th>#</th><th>Nazwa PE</th><th>TPCC</th><th>URL Piano</th><th>Kliknięcia</th><th>CTR</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th>#</th><th>Nazwa PE</th><th>TPCC</th><th>URL Piano</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderMail(o){
-  if(!o.mails.length) return '<span class="empty">Brak mailingów</span>';
-  const rows=o.mails.map((m,i)=>`<tr>
-    <td style="color:var(--text3);font-family:var(--mono);width:24px">${i+1}</td>
-    <td><input class="ed" value="${m.nazwa}" placeholder="nazwa" onchange="updMail(${o.id},${i},'nazwa',this.value)" onclick="event.stopPropagation()"></td>
-    <td><input class="ed" value="${m.date}" placeholder="DD.MM.RRRR" onchange="updMail(${o.id},${i},'date',this.value)" onclick="event.stopPropagation()" style="width:90px"></td>
-    <td><select class="ed" onchange="updMail(${o.id},${i},'sent',this.value)" onclick="event.stopPropagation()">
-      <option ${!m.sent?'selected':''}>—</option>
-      <option ${m.sent==='TAK'?'selected':''}>TAK</option>
-      <option ${m.sent==='NIE'?'selected':''}>NIE</option>
-      <option ${m.sent==='Zaplanowany'?'selected':''}>Zaplanowany</option>
-    </select></td>
-    <td><input class="ed" value="${m.count}" placeholder="—" onchange="updMail(${o.id},${i},'count',this.value)" onclick="event.stopPropagation()" style="width:80px"></td>
-  </tr>`).join('');
-  return `<table><thead><tr><th>#</th><th>Nazwa</th><th>Data wysyłki</th><th>Wysłany?</th><th>Liczba wysyłek</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-
-function toggle(id){ expanded.has(id)?expanded.delete(id):expanded.add(id); render(); }
-function updPE(oid,nr,f,v){ const o=offers.find(x=>x.id===oid),p=o.pes.find(x=>x.nr===nr); if(p)p[f]=v; }
-function updMail(oid,i,f,v){ const o=offers.find(x=>x.id===oid); if(o.mails[i])o.mails[i][f]=v; }
-
-function addPE(oid){
-  const o=offers.find(x=>x.id===oid);
-  o.pes.push({nr:o.pes.length+1,nazwa:'',tpcc:'',url:'',klik:'',ctr:''});
-  expanded.add(oid); render();
-}
-function addMail(oid){
-  const o=offers.find(x=>x.id===oid);
-  o.mails.push({nazwa:'',date:'',sent:'',count:''});
-  expanded.add(oid); render();
-}
-
-function sortBy(k){ offers.sort((a,b)=>(a[k]||'').localeCompare(b[k]||'')); render(); }
-function resetF(){ ['flt-q','flt-srv','flt-seg'].forEach(id=>document.getElementById(id).value=''); render(); }
-
-function importBulk(){
-  const raw=document.getElementById('bulk-txt').value.trim();
-  if(!raw)return;
-  let added=0;
-  raw.split('\n').forEach(line=>{
-    const c=line.split(/\t|;/);
-    if(c.length<4)return;
-    if(c[0].toLowerCase().includes('data'))return;
-    uid++;
-    offers.push({id:uid,start:c[0]||'',end:c[1]||'',nazwa:c[2]||'',serwis:c[3]||'',seg:c[4]||'ACQ',
-      idO:c[5]||'',idT:c[6]||'',idB:c[7]||'',rodzaj:c[8]||'',pes:[],mails:[]});
-    added++;
+function renderPETab() {
+  const tbody = document.getElementById('tbody-pe');
+  tbody.innerHTML = '';
+  promoElements.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.className = 'dr';
+    tr.style.cursor = 'default';
+    tr.innerHTML = `
+      <td>${p.serwis}</td>
+      <td>${segBadge(p.segment)}</td>
+      <td>${p.start || '<span class="empty">—</span>'}</td>
+      <td>${p.end   || '<span class="empty">—</span>'}</td>
+      <td class="wrap">${p.ofertaNazwa}</td>
+      <td style="font-family:var(--mono);color:var(--text3);">${p.nr}</td>
+      <td style="font-weight:500;">${p.nazwa || '<span class="empty">—</span>'}</td>
+      <td><span class="code">${p.tpcc || '—'}</span></td>
+      <td>${p.url ? `<a href="${p.url}" target="_blank" style="color:var(--accent2);font-family:var(--mono);font-size:11px;text-decoration:none;">${p.url}</a>` : '—'}</td>`;
+    tbody.appendChild(tr);
   });
-  document.getElementById('bulk-modal').classList.remove('open');
-  document.getElementById('bulk-txt').value='';
-  render();
-  if(added)alert(`✓ Zaimportowano ${added} ofert`);
 }
 
-function submitAdd(){
-  uid++;
-  offers.push({id:uid,
-    start:document.getElementById('f-start').value,
-    end:document.getElementById('f-end').value,
-    nazwa:document.getElementById('f-nazwa').value||'Nowa oferta',
-    serwis:document.getElementById('f-srv').value,
-    seg:document.getElementById('f-seg').value,
-    idO:document.getElementById('f-ido').value,
-    idT:document.getElementById('f-idt').value,
-    idB:document.getElementById('f-idb').value,
-    rodzaj:document.getElementById('f-rodzaj').value,
-    pes:[],mails:[]
-  });
-  document.getElementById('add-modal').classList.remove('open');
-  ['f-start','f-end','f-nazwa','f-ido','f-idt','f-idb','f-rodzaj'].forEach(id=>document.getElementById(id).value='');
+function updateStats() {
+  document.getElementById('s-total').textContent = offers.length;
+  document.getElementById('s-acq').textContent   = offers.filter(o => o.seg === 'ACQ').length;
+  document.getElementById('s-wb').textContent    = offers.filter(o => o.seg === 'Winback').length;
+  document.getElementById('s-inne').textContent  = offers.filter(o => o.seg === 'Inne').length;
+}
+
+function toggle(id) { expanded.has(id) ? expanded.delete(id) : expanded.add(id); render(); }
+function sortBy(k)  { offers.sort((a,b)=>(a[k]||'').localeCompare(b[k]||'')); render(); }
+function sortPE(k)  { promoElements.sort((a,b)=>String(a[k]||'').localeCompare(String(b[k]||''))); render(); }
+function resetF()   { ['flt-q','flt-srv','flt-seg'].forEach(id=>document.getElementById(id).value=''); render(); }
+
+// ── TABS ─────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-oferty').className = 'tab' + (tab==='oferty'?' active':'');
+  document.getElementById('tab-pe').className     = 'tab' + (tab==='pe'?' active':'');
+  document.getElementById('view-oferty').style.display = tab==='oferty' ? '' : 'none';
+  document.getElementById('view-pe').style.display     = tab==='pe'     ? '' : 'none';
   render();
 }
 
-document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
-render();
+// ── MODALS ────────────────────────────────────────────────
+function openModal(id) {
+  if (id === 'pe-modal') buildOfferList();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (id === 'pe-modal') resetPEModal();
+}
+document.querySelectorAll('.modal-overlay').forEach(el =>
+  el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); })
+);
+
+// ── ADD OFFER ─────────────────────────────────────────────
+async function submitAdd() {
+  const nazwa = document.getElementById('f-nazwa').value.trim();
+  if (!nazwa) { toast('Podaj nazwę oferty.','err'); return; }
+
+  const btn = document.getElementById('btn-add-offer');
+  btn.disabled = true;
+  btn.textContent = '⏳ Zapisywanie…';
+  setLoading(true);
+
+  const payload = {
+    type:   'offer',
+    start:  document.getElementById('f-start').value.trim(),
+    end:    document.getElementById('f-end').value.trim(),
+    nazwa,
+    serwis: document.getElementById('f-srv').value,
+    seg:    document.getElementById('f-seg').value,
+    idO:    document.getElementById('f-ido').value.trim(),
+    idT:    document.getElementById('f-idt').value.trim(),
+    idB:    document.getElementById('f-idb').value.trim(),
+    rodzaj: document.getElementById('f-rodzaj').value.trim(),
+  };
+
+  try {
+    const res = await postToSheets(payload);
+    if (res && res.success) {
+      closeModal('add-modal');
+      ['f-start','f-end','f-nazwa','f-ido','f-idt','f-idb','f-rodzaj'].forEach(id=>document.getElementById(id).value='');
+      toast('✓ Oferta zapisana w Google Sheets');
+      await fetchData();
+    } else {
+      toast('Błąd zapisu — spróbuj ponownie.', 'err');
+    }
+  } catch(e) {
+    toast('Błąd połączenia ze skryptem.', 'err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '💾 Zapisz w Sheets';
+  setLoading(false);
+}
+
+// ── PE MODAL ──────────────────────────────────────────────
+function buildOfferList() {
+  selectedOffer = null;
+  document.getElementById('selected-offer-info').style.display = 'none';
+  lockPEFields(true);
+  const list = document.getElementById('offer-list');
+  list.innerHTML = '';
+  document.getElementById('offer-list-count').textContent = offers.length;
+  if (!offers.length) {
+    list.innerHTML = '<div style="padding:14px;color:var(--text3);font-size:12px;font-style:italic;">Brak ofert — najpierw dodaj ofertę.</div>';
+    return;
+  }
+  offers.forEach(o => {
+    const div = document.createElement('div');
+    div.className = 'offer-opt';
+    div.dataset.id = o.id;
+    div.innerHTML = `
+      <span class="offer-opt-name" title="${o.nazwa}">${o.nazwa}</span>
+      <span class="offer-opt-meta">${segBadge(o.seg)}<span style="font-size:11px;color:var(--text3);">${o.serwis}</span></span>`;
+    div.onclick = () => selectOffer(o);
+    list.appendChild(div);
+  });
+}
+
+function selectOffer(o) {
+  selectedOffer = o;
+  document.querySelectorAll('.offer-opt').forEach(el => el.classList.remove('selected'));
+  const el = document.querySelector(`.offer-opt[data-id="${o.id}"]`);
+  if (el) el.classList.add('selected');
+  const info = document.getElementById('selected-offer-info');
+  info.style.display = 'block';
+  document.getElementById('selected-offer-text').innerHTML =
+    `${o.nazwa}<br><span style="color:var(--text3);font-size:11px;">${o.serwis} · ${o.seg} · ${o.start||'—'} → ${o.end||'—'}</span>`;
+  lockPEFields(false);
+}
+
+function lockPEFields(lock) {
+  const fields = document.getElementById('pe-fields');
+  const btn    = document.getElementById('pe-submit-btn');
+  fields.style.opacity       = lock ? '.35' : '1';
+  fields.style.pointerEvents = lock ? 'none' : 'auto';
+  btn.disabled = lock;
+}
+
+function resetPEModal() {
+  selectedOffer = null;
+  ['pe-nazwa','pe-tpcc','pe-url'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('selected-offer-info').style.display = 'none';
+  lockPEFields(true);
+}
+
+async function submitPE() {
+  if (!selectedOffer) { toast('Najpierw wybierz ofertę.','err'); return; }
+  const nr  = promoElements.filter(p => p.offerRowId === selectedOffer.id || p.ofertaNazwa === selectedOffer.nazwa).length + 1;
+  const btn = document.getElementById('pe-submit-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Zapisywanie…';
+  setLoading(true);
+
+  const payload = {
+    type:        'pe',
+    offerRowId:  selectedOffer.id,
+    serwis:      selectedOffer.serwis,
+    segment:     selectedOffer.seg,
+    start:       selectedOffer.start,
+    end:         selectedOffer.end,
+    ofertaNazwa: selectedOffer.nazwa,
+    nr,
+    nazwa: document.getElementById('pe-nazwa').value.trim(),
+    tpcc:  document.getElementById('pe-tpcc').value.trim(),
+    url:   document.getElementById('pe-url').value.trim(),
+  };
+
+  try {
+    const res = await postToSheets(payload);
+    if (res && res.success) {
+      closeModal('pe-modal');
+      toast(`✓ Promo element #${nr} zapisany w Google Sheets`);
+      await fetchData();
+    } else {
+      toast('Błąd zapisu — spróbuj ponownie.', 'err');
+    }
+  } catch(e) {
+    toast('Błąd połączenia ze skryptem.', 'err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '💾 Zapisz w Sheets';
+  setLoading(false);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+if (SCRIPT_URL) {
+  document.getElementById('setup-banner').classList.add('hidden');
+  fetchData();
+} else {
+  syncState('err', 'brak konfiguracji');
+  render();
+}
+
+// Auto-refresh co 2 minuty
+setInterval(() => { if (SCRIPT_URL) fetchData(); }, 120000);
 </script>
 </body>
 </html>
